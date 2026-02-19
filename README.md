@@ -1,73 +1,21 @@
-# React + TypeScript + Vite
+Réponses pour la Présentation Vidéo
+1. Explication concise de l'architecture logicielle choisie
+L'application repose sur une architecture React optimisée et modulaire, conçue pour la collaboration temps réel fluide.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Gestion d'État Globale : Utilisation d'un EditorContext avec useReducer pour centraliser les actions atomiques (frappe locale, réception distante, synchronisation).
+Moteur de Simulation : Un hook personnalisé 
+useSimulatedNetwork
+ qui agit comme un backend virtuel. Il gère non seulement la latence et les pertes de paquets, mais aussi une logique de bots "intelligents" qui écrivent une histoire cohérente et corrigent leurs fautes, simulant une vraie session de travail.
+Rendu Optimisé : Séparation stricte entre la couche de données (état) et la couche visuelle (composants memo), garantissant que seules les lignes modifiées sont redessinées.
+2. Démonstration fonctionnelle (Points Clés à montrer)
+Nous démontrons une expérience utilisateur "sans friction" malgré les contraintes réseaux :
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Édition Simultanée : Vous pouvez écrire votre propre texte pendant que des utilisateurs virtuels (Alice, Bob) rédigent et corrigent une histoire à plusieurs mains.
+Stabilité du Curseur : Grâce à une logique de préservation différentielle, votre curseur ne "saute" jamais, même si du texte est inséré avant votre position par un autre utilisateur.
+Précision Pixel-Perfect : L'alignement des curseurs distants est calculé à l'unité ch près sur une police monospace stricte (Courier New), éliminant tout décalage visuel.
+Résilience : Le système gère les fluctuations de latence (affichées en ms) et les micro-coupures sans perte de données locale.
+3. Justification des choix techniques critiques
+Unités ch vs px/em : Pour garantir un alignement parfait des curseurs collaboratifs, nous avons banni les unités relatives approximatives au profit de l'unité ch (largeur du caractère 0) couplée à une police monospace stricte. Cela assure que le curseur d'Alice est toujours exactement devant la lettre qu'elle vient d'écrire.
+Mises à jour Atomiques (UPDATE_SIMULATION) : Pour éviter que le curseur ne soit "plus rapide" que le texte, nous avons regroupé l'insertion du caractère et le déplacement du curseur dans une seule action atomique du reducer, garantissant une synchronisation visuelle parfaite.
+Préservation de Scroll & Sélection : L'utilisation de useLayoutEffect permet de recalculer et restaurer la position du curseur et du défilement après chaque mise à jour distante mais avant que le navigateur ne peigne l'écran, rendant les ajustements invisibles pour l'utilisateur.
+Tailwind CSS : Choisi pour sa capacité à gérer le Dark Mode et le Responsive Design sans surcoût de performance, essentiel pour une application qui doit rester fluide.
